@@ -1,13 +1,9 @@
----
-title: "Reproducible Research: Peer Assessment 1"
-output: 
-  html_document:
-    keep_md: true
----
+# Reproducible Research: Peer Assessment 1
 
 
 ## Loading and preprocessing the data
-```{R Loading and Preprocessing Data, echo=TRUE}
+
+```r
 activity <- read.csv(unz("activity.zip", "activity.csv"),
                      header=TRUE, sep=",")
 ```
@@ -15,7 +11,8 @@ activity <- read.csv(unz("activity.zip", "activity.csv"),
 Data is loaded.
 
 ## What is mean total number of steps taken per day?
-```{R Calculate mean steps per day ignoring missing values, echo=TRUE}
+
+```r
 #Create list of total daily steps
 avgDailySteps <- tapply(activity$steps, activity$date, FUN=sum)
 
@@ -26,7 +23,11 @@ hist(avgDailySteps,
      xlab="Total Daily Steps",
      ylab="Frequency",
      main="Histogram of Total Daily Steps")
+```
 
+![](PA1_template_files/figure-html/Calculate mean steps per day ignoring missing values-1.png)<!-- -->
+
+```r
 #Calculate the mean of total number of steps taken per day
 meanAvgSteps = as.integer(round(mean(avgDailySteps, na.rm=TRUE), 1))
 
@@ -34,11 +35,12 @@ meanAvgSteps = as.integer(round(mean(avgDailySteps, na.rm=TRUE), 1))
 medianAvgSteps = as.integer(median(avgDailySteps, na.rm=TRUE))
 ```
 
-The mean of the total number of steps taken per day is `r meanAvgSteps`  
-The median of the total number of steps taken per day is `r medianAvgSteps`  
+The mean of the total number of steps taken per day is 10766  
+The median of the total number of steps taken per day is 10765  
 
 ## What is the average daily activity pattern?
-```{R Calculate mean steps per daily chunk ignoring missing values, echo=TRUE}
+
+```r
 #Create dataframe of average daily steps by internal number
 avgIntervalSteps <- data.frame(as.integer(unique(activity$interval)),
                                tapply(activity$steps,
@@ -53,22 +55,27 @@ plot(avgIntervalSteps,
      main="Average Number of Steps Taker by Daily Interval",
      xlab="5-minute Interval Number",
      ylab="Average Number of Steps Taken")
+```
 
+![](PA1_template_files/figure-html/Calculate mean steps per daily chunk ignoring missing values-1.png)<!-- -->
+
+```r
 #Find the 5-minute interval that has the maximum number of steps
 maxStepsInterval = avgIntervalSteps$interval[which.max(avgIntervalSteps$avgSteps)]
-
 ```
-The 5-minute interval that contains the highest average number of steps, across all days in the data set, is number `r maxStepsInterval`.  
+The 5-minute interval that contains the highest average number of steps, across all days in the data set, is number 835.  
 
 ## Imputing missing values
-```{R Count missing values, echo=TRUE}
+
+```r
 #Count rows with any NA's in them
 rowsWithNA = nrow(activity) - sum(complete.cases(activity))
 ```
 
-The total number of rows with missing values in the dataset is `r rowsWithNA`.  
+The total number of rows with missing values in the dataset is 2304.  
 
-```{R Impute missing values, echo=TRUE}
+
+```r
 #Duplicate activity database for storage of imputed steps
 actImp <- activity
 
@@ -89,24 +96,28 @@ hist(avgDailyImpSteps,
      xlab="Total Daily Steps",
      ylab="Frequency",
      main="Histogram of Total Daily Steps with Imputed Data")
+```
 
+![](PA1_template_files/figure-html/Impute missing values-1.png)<!-- -->
+
+```r
 #Calculate the mean of average Steps
 meanAvgImpSteps = as.integer(round(mean(avgDailyImpSteps), 1))
 
 #Calculate the median of average Steps
 medianAvgImpSteps = as.integer(median(avgDailyImpSteps))
-
 ```
 
-The mean of the total number of steps taken per day is `r meanAvgSteps`.  
-The median of the total number of steps taken per day is `r medianAvgSteps`.  
+The mean of the total number of steps taken per day is 10766.  
+The median of the total number of steps taken per day is 10765.  
 
 These values do not differ from the first part of the assignment when NA's
 were ignored. The impact of imputing missing data, using averages, on the
 estimates of the total daily number of steps is minimal.
 
 ## Are there differences in activity patterns between weekdays and weekends?
-```{R Set Weekday/Weekend Factor, echo=TRUE}
+
+```r
 #Create list of weekdays and weekend days
 weekdayDays = c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday")
 weekendDays = c("Saturday", "Sunday")
@@ -151,7 +162,8 @@ rm(avgIntImpWeekdaySteps, avgIntImpWeekendSteps)
 
 
 #Make panel Plot of weekdays vs. weekend avg. steps per interval
-```{R Panel Plot of Weekdays vs. weekend avg. steps per interval, echo=TRUE}
+
+```r
 library(lattice)
 xyplot(avgSteps~interval | TypeOfDay,
        data=avgIntImpSteps,
@@ -161,3 +173,5 @@ xyplot(avgSteps~interval | TypeOfDay,
        main="Average Number of Steps per Interval",
        layout=c(1, 2))
 ```
+
+![](PA1_template_files/figure-html/Panel Plot of Weekdays vs. weekend avg. steps per interval-1.png)<!-- -->
